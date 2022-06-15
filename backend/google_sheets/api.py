@@ -2,9 +2,9 @@ import httplib2
 import apiclient
 from oauth2client.service_account import ServiceAccountCredentials
 
-from settings import CREDENTIALS_FILE, \
-                     SPREADSHEET_ID, \
-                     SCOPES
+from .settings import CREDENTIALS_FILE, \
+                      SPREADSHEET_ID, \
+                      SCOPES
 
 
 class GoogleSheetsAPI:
@@ -19,7 +19,7 @@ class GoogleSheetsAPI:
             http=http_auth
         )
 
-    def _get_full_sheet(
+    def get_full_sheet(
             self,
             point_first: str, point_last: str,
             sheet_id: str = SPREADSHEET_ID,
