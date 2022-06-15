@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "sheets-api-353414",
+  "private_key_id": "3a9d0e4ca3170624332dea048f7080c59b43600e",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvwIBADANBgkqhkiG9w0BAQEFAASCBKkwggSlAgEAAoIBAQCunFQW1J5rP1hK\nwUrK3oC4070dtTxIQvW22Iop8TmRKzAL7HfaOqRTNeUgHaDJJq41w3Ie6bfXsBI+\nWePtsPnAUC7jeOFN8qseeAQgtMhJTdQS19c4xf3yJHMxDMHJpWJyU/MhzmJD6Q5X\n/JXxjGWE7IEK5VB4SV9Q3F1mEJI05GkuErUAYbMs/JyX9jST5Pdkf+xVY3ns5xIy\no8yeofrdsKWYKdkLJnBc84ZWTQjVkmwBzn+TuZa3ennMUNow9vDCRZxyDfoqfQSb\nGtyTO8ywX5GZueW8BJhAE3Lr0pI/6Iggueh3eic3DeG4DMgD4FLqxDAihDa3LgbA\nd2UU6sOVAgMBAAECggEAFgD7xMvC8fNv2i3NEc8jzAbc0mlUISwVAFd948azETTu\nz1XbjavtqNHGH7u0Fx0xf3NzhmtAAGV/Cw3zX/D5LC++lOpXBCZkQ4juxjtZ8Qjm\nhIBgLhafR5wpywDXS+S0SQGExloWfoXYSaS6NZASfAN8yIV41Eu0wAEhIPtOHW2E\n7NpoNtcdaQhu4lLfYKjU5B958EnPyldsdegSlTkQnrD/rKr54AsB3a3s++xzscKw\nxOy3WligUIE9BtW8oIzNYygWyfdZi3oOH97HG5jYKpIWpHQYTAdUIQ4LrIiCIRGk\n6+VBdjrMuwC69kAhH2pzQDwhpYB81WnW9XtazDlvYQKBgQDeC4BQMUNMdw76+3XW\nlnyV7VLTZpxaWNq2bywKXVclc0ZZ1bYJFw5ErxL/lcoO6U1cJ7MS4ASvfXnrAk9q\nWQwYBERCpmugwcBX2wWduH5pjoFkKZATEWEPD4x8upacVDl1cTsGKOfmVxiaQBez\n1Ht4v/Ek4gaHybiJMs4BA9hooQKBgQDJT+Uxjg19+jZyYvRacI6DhIJYndH+RkrX\nA7txKBg2RFbFjw3SWu6ZIBX1+7II0X/TCgmPvh1cDUN0/Tx3BKgWf4Pj7wtgPd9J\nvTYEqx0dWB74lBb79YRXACZ5oHCI9FzIaho3bx5FIKqdfqpbES1MtmjRx09i0QNw\nel0i5GOydQKBgQC2HqbSn2U8fVaLIt6m7+0lp27Mt5e8Pq68/XgY1DAbJm5oVnIl\nCIUKbrJdcYU2L8LkuCcXbyhIq9jomY97gaf6tt0p8YfLZb8WEC2ODHmaqGiWN8TU\n7uc1zCIFV6EafbZXDlVEGx8BfSRPuAv40mmnQ39NKhoDG7/AwCvZB0djoQKBgQC+\n4WfDphr68Y5Axb1GJ+WppLJnTjW4MXRzDdHkiIz0n7XbGzqS06/bN4Y7OE3meKcI\nN0M7rZtvFhB5VEjJ3Xt34a7wKFAUEHaxF5yproorscukDd8BRxoV2EmjF9K8uV9k\nlN6I427DQycjsN/c+5uFWoxnJOIMI31sYEoBdKdnpQKBgQCtaKW8IbdbAjujbWyo\n6HfGfYQoPAOHrp5c86oAbDvxfQ7sBnG+JNAaLd+AC86aRx9/qUqKwrgnlTHRYS6c\nS5x4PbM6TXqum0db1kMvPa0ELen9UF1Ssousf0FbSuv7Eyq5RV5yqkCXCLFNumRH\n7YToaFIeI3Lji8JvcEibhdVN6w==\n-----END PRIVATE KEY-----\n",
+  "client_email": "order-tracker@sheets-api-353414.iam.gserviceaccount.com",
+  "client_id": "111751889361647160157",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/order-tracker%40sheets-api-353414.iam.gserviceaccount.com"
+}
