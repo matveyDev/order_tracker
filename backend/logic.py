@@ -1,27 +1,26 @@
 import pandas as pd
 
 from sqlalchemy.orm import Session
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, update
 
-from utils import Handler
+from utils import DFHandler
 from core.database.db import SQLALCHEMY_DATABASE_URL
 from core.order.models import Order
 from google_sheets.api import GoogleSheetsAPI
 
 
-# ToDo: Separate on 2 classes
-class OrderTracker:
+class OrderTrackBase:
     """
     Integration Postgres with GoogleSheets
     """
     def __init__(self) -> None:
         self.engine = create_engine(SQLALCHEMY_DATABASE_URL)
-        self.sheets_api = GoogleSheetsAPI()
-        self.handler = Handler()
+        self.handler = DFHandler()
 
     def _get_df_from_sheet(self) -> pd.DataFrame:
+        sheets_api = GoogleSheetsAPI()
         columns = Order.__table__.columns.keys()
-        sheet = self.sheets_api.get_full_sheet(
+        sheet = sheets_api.get_full_sheet(
             point_first='A',
             point_last='D'
         )['values'][1:]
@@ -37,7 +36,7 @@ class OrderTracker:
         session = Session(self.engine)
         objects = session.query(Order).all()
         df_db = self.handler.get_df_from_objects(objects)
-        
+
         return df_db
 
     def _get_updated_df_db(
@@ -49,24 +48,108 @@ class OrderTracker:
         for idx_db in df.index:
             for idx_sheet in df_sheet.index:
 
-                if self.handler.need_update(
+                if self.handler.df_need_update(
                     df, df_sheet,
                     idx_db, idx_sheet,
                     'order_number'
                 ):
                     df.loc[idx_db] = df_sheet.loc[idx_sheet]
-                else:
-                    pass
-        
+
         return df
 
-    def check_and_update_database(self) -> bool:
-        df_sheet = self._get_df_from_sheet()
-        df_db = self._get_df_from_db()
-        updated_df_db = self._get_updated_df_db(df_db, df_sheet)
-        
-        if not df_db.equals(updated_df_db):
-            # Update DataBase here
+    def _get_df_to_insert_in_db(
+            self, df_db: pd.DataFrame, df_sheet:pd.DataFrame
+        ) -> pd.DataFrame:
+        df_sheet = df_sheet.copy()
+        df_db = df_db.copy()
+
+        for idx_sheet in df_sheet.index:
+            for idx_db in df_db.index:
+                if (idx_sheet in df_sheet.index) and \
+                    self.handler.dfs_column_equals(
+                    df_db, df_sheet, idx_db, idx_sheet, 'order_number'
+                    ):
+                    df_sheet = df_sheet.drop(idx_sheet)
+                else:
+                    continue
+
+        return df_sheet
+
+
+class OrderTrackChecker(OrderTrackBase):
+
+    @staticmethod
+    def need_update_databse(df_1: pd.DataFrame, df_2: pd.DataFrame) -> bool:
+        if not df_1.equals(df_2):
             return True
         else:
             return False
+
+    @staticmethod
+    def need_delete_from_db(df_1: pd.DataFrame, df_2: pd.DataFrame) -> bool:
+        if not len(df_1) == len(df_2):
+            return True
+        else:
+            return False
+
+    def need_insert_in_db(self, df_1: pd.DataFrame, df_2: pd.DataFrame):
+        df_to_insert = self._get_df_to_insert_in_db(df_1, df_2)
+        if not df_to_insert.empty():
+            return True
+        else:
+            return False
+
+
+class OrderTrack(OrderTrackBase):
+
+    def __init__(self) -> None:
+        super().__init__()
+        self.checker = OrderTrackChecker()
+        self.df_sheet = self._get_df_from_sheet()
+        self.df_db = self._get_df_from_db()
+
+    def insert_in_db(self) -> None:
+        if self.checker.need_insert_in_db(self.df_db, self.df_sheet):
+            df_to_insert = self._get_df_to_insert_in_db(self.df_db, self.df_sheet)
+            df_to_insert.to_sql('order', self.engine, if_exists='append', index=False)
+
+    def delete_from_db(self) -> None:
+        pass
+
+    def update_db(self) -> bool:
+        updated_df_db = self._get_updated_df_db(
+            self.df_db, self.df_sheet
+        ).sort_values('id')
+
+        if self.checker.need_update_databse(self.df_db, updated_df_db):
+            self.df_sheet.to_sql('order_sheet', self.engine, if_exists='replace', index=False)
+            df_db = self.df_db.sort_values('id')
+            df_compared = updated_df_db.compare(
+                df_db, keep_shape=True, keep_equal=True
+            ).reset_index(drop=True)
+
+            self._update_db_by_order_number(df_compared)
+
+            return True
+        else:
+            return False
+
+    def _update_db_by_order_number(self, df_compared: pd.DataFrame) -> None:
+        columns = Order.__table__.columns.keys()
+        columns.remove('id')
+
+        for _, row in df_compared.iterrows():
+            if not all([row[column].self == row[column].other for column in columns]):
+                order_number = row.order_number.self
+                query = (
+                    update(Order).
+                    where(Order.order_number == order_number).
+                    values(
+                        price=int(row.price.self),
+                        delivery_expected=row.delivery_expected.self
+                    )
+                )
+                with self.engine.connect() as con:
+                    con.execute(query)
+
+OrderTrack().update_db()
