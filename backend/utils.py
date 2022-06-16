@@ -3,7 +3,7 @@ import pandas as pd
 from core.order.models import Order
 
 
-class Handler:
+class DFHandler:
 
     @staticmethod
     def prepare_df(df: pd.DataFrame) -> pd.DataFrame:
@@ -33,7 +33,8 @@ class Handler:
         )
         return df
 
-    def need_update(
+    # Check df_1 if need update
+    def df_need_update(
             self,
             df_1: pd.DataFrame, df_2: pd.DataFrame,
             idx_1: int, idx_2: int,
@@ -41,7 +42,7 @@ class Handler:
         ) -> bool:
         column_values_equals = self.dfs_column_equals(df_1, df_2, idx_1, idx_2, column)
         row_values_equals = self.dfs_row_equals(df_1, df_2, idx_1, idx_2)
-        
+
         if column_values_equals is False:
             return False
         if (column_values_equals is True) and \
