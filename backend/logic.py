@@ -1,7 +1,7 @@
 import pandas as pd
 
 from sqlalchemy.orm import Session
-from sqlalchemy import create_engine, update
+from sqlalchemy import create_engine, update, delete
 
 from utils import DFHandler
 from core.database.db import SQLALCHEMY_DATABASE_URL
@@ -75,6 +75,15 @@ class OrderTrackBase:
 
         return df_sheet
 
+    @staticmethod
+    def _get_orders_to_delete(df_db: pd.DataFrame, df_sheet: pd.DataFrame) -> list:
+        order_numbers_to_delete = list()
+        for _, row in df_db.iterrows():
+            if row.order_number not in df_sheet.order_number.values:
+                order_numbers_to_delete.append(row.order_number)
+
+        return order_numbers_to_delete
+
 
 class OrderTrackChecker(OrderTrackBase):
 
@@ -86,8 +95,8 @@ class OrderTrackChecker(OrderTrackBase):
             return False
 
     @staticmethod
-    def need_delete_from_db(df_1: pd.DataFrame, df_2: pd.DataFrame) -> bool:
-        if not len(df_1) == len(df_2):
+    def need_delete_from_db(df_db: pd.DataFrame, df_sheet: pd.DataFrame) -> bool:
+        if len(df_db) > len(df_sheet):
             return True
         else:
             return False
@@ -105,16 +114,46 @@ class OrderTrack(OrderTrackBase):
     def __init__(self) -> None:
         super().__init__()
         self.checker = OrderTrackChecker()
-        self.df_sheet = self._get_df_from_sheet()
-        self.df_db = self._get_df_from_db()
 
-    def insert_in_db(self) -> None:
+        self.df_db = self._get_df_from_db()
+        self.df_sheet = self._get_df_from_sheet()
+        self.df_sheet.to_sql(
+            'order_sheet', self.engine,
+            if_exists='replace', index=False
+        )
+
+    def insert_in_db(self) -> bool:
         if self.checker.need_insert_in_db(self.df_db, self.df_sheet):
             df_to_insert = self._get_df_to_insert_in_db(self.df_db, self.df_sheet)
             df_to_insert.to_sql('order', self.engine, if_exists='append', index=False)
+            
+            return True
+        else:
+            return False
 
-    def delete_from_db(self) -> None:
-        pass
+    def delete_from_db(self) -> bool:
+        if self.checker.need_delete_from_db(self.df_db, self.df_sheet):
+            df_sheet = self.df_sheet.sort_values('id')
+            order_numbers = self._get_orders_to_delete(
+                self.df_db, df_sheet
+            )
+            self._delete_from_db_by_order_number(order_numbers)
+
+            return True
+        else:
+            return False
+
+    def _delete_from_db_by_order_number(self, order_numbers: list) -> None:
+        for order_number in order_numbers:
+            # There are might be a better solution
+            # Problem: Too many queries
+            # ToDo: rewrite query
+            query = (
+                delete(Order).
+                where(Order.order_number == order_number)
+            )
+            with self.engine.connect() as con:
+                con.execute(query)
 
     def update_db(self) -> bool:
         updated_df_db = self._get_updated_df_db(
@@ -122,7 +161,6 @@ class OrderTrack(OrderTrackBase):
         ).sort_values('id')
 
         if self.checker.need_update_databse(self.df_db, updated_df_db):
-            self.df_sheet.to_sql('order_sheet', self.engine, if_exists='replace', index=False)
             df_db = self.df_db.sort_values('id')
             df_compared = updated_df_db.compare(
                 df_db, keep_shape=True, keep_equal=True
@@ -151,5 +189,3 @@ class OrderTrack(OrderTrackBase):
                 )
                 with self.engine.connect() as con:
                     con.execute(query)
-
-OrderTrack().update_db()
