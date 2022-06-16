@@ -103,7 +103,7 @@ class OrderTrackChecker(OrderTrackBase):
 
     def need_insert_in_db(self, df_1: pd.DataFrame, df_2: pd.DataFrame):
         df_to_insert = self._get_df_to_insert_in_db(df_1, df_2)
-        if not df_to_insert.empty():
+        if not df_to_insert.empty:
             return True
         else:
             return False
