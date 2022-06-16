@@ -60,7 +60,7 @@ class OrderTracker:
         
         return df
 
-    def update_database(self) -> bool:
+    def check_and_update_database(self) -> bool:
         df_sheet = self._get_df_from_sheet()
         df_db = self._get_df_from_db()
         updated_df_db = self._get_updated_df_db(df_db, df_sheet)
