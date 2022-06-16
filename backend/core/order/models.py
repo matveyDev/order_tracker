@@ -8,7 +8,7 @@ class Order(Base):
     __tablename__ = 'order'
 
     id = Column(Integer, primary_key=True, index=True, unique=True, autoincrement=True)
-    order_number = Column(Integer, nullable=False)
+    order_number = Column(Integer, nullable=False, index=True)
     price = Column(Numeric, nullable=False)
     delivery_expected = Column(Date, nullable=False)
 
