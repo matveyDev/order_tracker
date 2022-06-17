@@ -89,10 +89,18 @@ class OrderTrackChecker(OrderTrackBase):
 
     @staticmethod
     def need_update_databse(df_1: pd.DataFrame, df_2: pd.DataFrame) -> bool:
-        if not df_1.equals(df_2):
-            return True
-        else:
-            return False
+        df_1 = df_1.sort_values('id')
+        df_2 = df_2.sort_values('id')
+
+        if len(df_1) != len(df_2):
+            ot = OrderTrack()
+            ot.insert_in_db()
+
+        for idx, _ in df_1.iterrows():
+            if False in (df_1.loc[idx].values == df_2.loc[idx].values):
+                return True
+
+        return False
 
     @staticmethod
     def need_delete_from_db(df_db: pd.DataFrame, df_sheet: pd.DataFrame) -> bool:
