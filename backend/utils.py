@@ -1,7 +1,8 @@
-import pandas as pd
-import requests
 import xml.etree.ElementTree as ET
 from collections import defaultdict
+
+import pandas as pd
+import requests
 
 from core.order.models import Order
 
@@ -26,10 +27,10 @@ class CurrencyConversion:
 
         return currency_course
 
-    def convert_to_ruble(self, value, currency: str) -> float:
+    def convert_to_ruble(self, value, currency: str) -> int:
         value = float(value)
         course = self.currency_course[currency]
-        result = value * course
+        result = int(value * course)
         return result
 
 
