@@ -123,6 +123,7 @@ class OrderTrack(OrderTrackBase):
         super().__init__()
         self.checker = OrderTrackChecker()
 
+    def __set_up(self) -> None:
         self.df_db = self._get_df_from_db()
         self.df_sheet = self._get_df_from_sheet()
         self.df_sheet.to_sql(
@@ -131,6 +132,7 @@ class OrderTrack(OrderTrackBase):
         )
 
     def insert_in_db(self) -> bool:
+        self.__set_up()
         if self.checker.need_insert_in_db(self.df_db, self.df_sheet):
             df_to_insert = self._get_df_to_insert_in_db(self.df_db, self.df_sheet)
             df_to_insert.to_sql('order', self.engine, if_exists='append', index=False)
@@ -140,6 +142,7 @@ class OrderTrack(OrderTrackBase):
             return False
 
     def delete_from_db(self) -> bool:
+        self.__set_up()
         if self.checker.need_delete_from_db(self.df_db, self.df_sheet):
             df_sheet = self.df_sheet.sort_values('id')
             order_numbers = self._get_orders_to_delete(
@@ -164,6 +167,7 @@ class OrderTrack(OrderTrackBase):
                 con.execute(query)
 
     def update_db(self) -> bool:
+        self.__set_up()
         updated_df_db = self._get_updated_df_db(
             self.df_db, self.df_sheet
         ).sort_values('id')
