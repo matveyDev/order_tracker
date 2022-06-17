@@ -1,24 +1,34 @@
 import pandas as pd
 import requests
 import xml.etree.ElementTree as ET
+from collections import defaultdict
 
 from core.order.models import Order
 
 
 class CurrencyConversion:
+
     def __init__(self) -> None:
         self.url_course = 'https://www.cbr.ru/scripts/XML_daily.asp'
+        self.currency_course = self._create_courses()
 
-    def dollar_to_ruble(self, value: float | int) -> float:
+    def _create_courses(self) -> dict:
         response_xml = requests.get(self.url_course)
         tree = ET.ElementTree(ET.fromstring(response_xml.text))
         root = tree.getroot()
-        for child in root:
-            # Dollar ID
-            if child.attrib['ID'] == 'R01235':
-                course = [i.text for i in child][-1]
 
-        course = float(course.replace(',', '.'))
+        currency_course = defaultdict(str)
+        for child in root:
+            values = [i.text for i in child]
+            currency = values[1]
+            course = float(values[-1].replace(',', '.'))
+            currency_course[currency] = course
+
+        return currency_course
+
+    def convert_to_ruble(self, value, currency: str) -> float:
+        value = float(value)
+        course = self.currency_course[currency]
         result = value * course
         return result
 
@@ -27,6 +37,8 @@ class DFHandler:
 
     @staticmethod
     def prepare_df(df: pd.DataFrame) -> pd.DataFrame:
+        conversion = CurrencyConversion()
+        df['price'] = df['price'].apply(conversion.convert_to_ruble, args=('USD',))
         df['price'] = pd.to_numeric(df['price'])
         df = df.astype({
             'id': 'int',
