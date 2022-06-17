@@ -1,6 +1,26 @@
 import pandas as pd
+import requests
+import xml.etree.ElementTree as ET
 
 from core.order.models import Order
+
+
+class CurrencyConversion:
+    def __init__(self) -> None:
+        self.url_course = 'https://www.cbr.ru/scripts/XML_daily.asp'
+
+    def dollar_to_ruble(self, value: float | int) -> float:
+        response_xml = requests.get(self.url_course)
+        tree = ET.ElementTree(ET.fromstring(response_xml.text))
+        root = tree.getroot()
+        for child in root:
+            # Dollar ID
+            if child.attrib['ID'] == 'R01235':
+                course = [i.text for i in child][-1]
+
+        course = float(course.replace(',', '.'))
+        result = value * course
+        return result
 
 
 class DFHandler:
