@@ -4,10 +4,10 @@ import pandas as pd
 from sqlalchemy import create_engine, delete, update
 from sqlalchemy.orm import Session
 
-from core.database.db import SQLALCHEMY_DATABASE_URL
-from core.order.models import Order
-from google_sheets.api import GoogleSheetsAPI
-from utils import DFHandler
+from .core.database.db import SQLALCHEMY_DATABASE_URL
+from .core.order.models import Order
+from .google_sheets.api import GoogleSheetsAPI
+from .utils import DFHandler
 
 
 class OrderTrackBase:
@@ -211,6 +211,7 @@ class OrderTrackManager(OrderTrack):
         df = self._get_df_from_db()
         # Date format from sheet
         df['delivery_expected'] = df['delivery_expected'].apply(lambda x: x.strftime('%d.%m.%Y'))
+        df = df.drop(columns=['price_in_rubles'])
         jsonable_df = df.to_json(orient="split")
         
         return jsonable_df
