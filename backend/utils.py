@@ -39,7 +39,7 @@ class DFHandler:
     @staticmethod
     def prepare_df(df: pd.DataFrame) -> pd.DataFrame:
         conversion = CurrencyConversion()
-        df['price'] = df['price'].apply(conversion.convert_to_ruble, args=('USD',))
+        df['price_in_rubles'] = df['price'].apply(conversion.convert_to_ruble, args=('USD',))
         df['price'] = pd.to_numeric(df['price'])
         df = df.astype({
             'id': 'int',
