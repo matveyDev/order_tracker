@@ -1,12 +1,13 @@
+import json
 import pandas as pd
 
+from sqlalchemy import create_engine, delete, update
 from sqlalchemy.orm import Session
-from sqlalchemy import create_engine, update, delete
 
-from utils import DFHandler
 from core.database.db import SQLALCHEMY_DATABASE_URL
 from core.order.models import Order
 from google_sheets.api import GoogleSheetsAPI
+from utils import DFHandler
 
 
 class OrderTrackBase:
@@ -20,6 +21,7 @@ class OrderTrackBase:
     def _get_df_from_sheet(self) -> pd.DataFrame:
         sheets_api = GoogleSheetsAPI()
         columns = Order.__table__.columns.keys()
+        columns.remove('price_in_rubles')
         sheet = sheets_api.get_full_sheet(
             point_first='A',
             point_last='D'
@@ -201,3 +203,31 @@ class OrderTrack(OrderTrackBase):
                 )
                 with self.engine.connect() as con:
                     con.execute(query)
+
+
+class OrderTrackManager(OrderTrack):
+    
+    def get_jsonable_df_from_db(self) -> json:
+        df = self._get_df_from_db()
+        # Date format from sheet
+        df['delivery_expected'] = df['delivery_expected'].apply(lambda x: x.strftime('%d.%m.%Y'))
+        jsonable_df = df.to_json(orient="split")
+        
+        return jsonable_df
+
+    def check_delivery_expected(self):
+        session = Session(self.engine)
+        orders = session.query(Order).all()
+        
+        for order in orders:
+            if order.delivery_expired():
+                # Send notification in telegram
+                pass
+
+    def check_updates(self):
+        insered = self.insert_in_db()
+        updated = self.update_db()
+        deleted = self.delete_from_db()
+        
+        if any([insered, updated, deleted]):
+            data = self._get_df_from_db()
