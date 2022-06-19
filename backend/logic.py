@@ -7,6 +7,7 @@ from sqlalchemy.orm import Session
 from .core.order.models import Order
 from .core.database.db import SQLALCHEMY_DATABASE_URL
 from .google_sheets.api import GoogleSheetsAPI
+from .telegram.api import TelegramAPI
 from .utils import DFHandler
 
 
@@ -209,7 +210,7 @@ class OrderTrackManager(OrderTrack):
     
     def get_jsonable_df_from_db(self) -> json:
         df = self._get_df_from_db()
-        # Date format from sheet
+        # Date format from google sheet
         df['delivery_expected'] = df['delivery_expected'].apply(lambda x: x.strftime('%d.%m.%Y'))
         df = df.drop(columns=['price_in_rubles'])
         df = df.sort_values(by=['id'])
@@ -220,11 +221,12 @@ class OrderTrackManager(OrderTrack):
     def check_delivery_expected(self):
         session = Session(self.engine)
         orders = session.query(Order).all()
-        
+
         for order in orders:
             if order.delivery_expired():
-                # Send notification in telegram
-                pass
+                telegram_api = TelegramAPI()
+                message = f'Order №{order.order_number} has expired'
+                telegram_api.send_notification(message)
 
     def check_updates(self) -> bool:
         insered = self.insert_in_db()
