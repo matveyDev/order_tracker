@@ -44,13 +44,14 @@ class App extends React.Component {
     this.socket.on('message', (json) => {
       this.createState(json);
     });
-    setInterval(() => {
+    const timerId = setInterval(() => {
       this.socket.send('get_data')
     }, 5000);
   };
 
   componentWillUnmount() {
-    this.socket.close()
+    this.socket.close();
+    clearInterval(this.timerId);
   };
 
   createState(json) {
