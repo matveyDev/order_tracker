@@ -1,0 +1,59 @@
+* {
+  font-family: arial, sans-serif;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+td,
+th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}
+
+tr:nth-child(even) {
+  background-color: #dddddd;
+}
+
+.App {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.right-side {
+  display: flex;
+  flex-direction: column;
+}
+
+.total {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border: 1px solid gray;
+  margin-bottom: 20px;
+  flex: 1 1 auto;
+}
+
+.total-title {
+  display: flex;
+  min-width: 100%;
+  color: white;
+  background-color: black;
+  justify-content: center;
+}
+
+.total-value {
+  font-size: 60px;
+}
+
+.total-title > h1 {
+  margin: 5px 0;
+}
+
+.table {
+  width: 40rem;
+}
