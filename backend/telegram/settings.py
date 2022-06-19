@@ -1,0 +1,2 @@
+TOKEN = '5400673926:AAGU7RatiEuCpzL0aDVchT4oRuMMTOFvLhs'
+CHAT_ID = '@orderNotifier'
