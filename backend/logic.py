@@ -4,11 +4,11 @@ import pandas as pd
 from sqlalchemy import create_engine, delete, update
 from sqlalchemy.orm import Session
 
-from .core.order.models import Order
-from .core.database.db import SQLALCHEMY_DATABASE_URL
-from .google_sheets.api import GoogleSheetsAPI
-from .telegram.api import TelegramAPI
-from .utils import DFHandler
+from core.order.models import Order
+from core.database.db import SQLALCHEMY_DATABASE_URL
+from google_sheets.api import GoogleSheetsAPI
+from telegram.api import TelegramAPI
+from utils import DFHandler
 
 
 class OrderTrackBase:

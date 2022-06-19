@@ -4,7 +4,7 @@ from collections import defaultdict
 import pandas as pd
 import requests
 
-from .core.order.models import Order
+from core.order.models import Order
 
 
 class CurrencyConversion:

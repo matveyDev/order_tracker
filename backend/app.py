@@ -4,7 +4,7 @@ from flask import Flask
 from flask_cors import CORS
 from flask_socketio import SocketIO, send
 
-from .logic import OrderTrackManager
+from logic import OrderTrackManager
 
 manager = OrderTrackManager()
 
@@ -46,4 +46,4 @@ def on_message(message):
 
 
 if __name__ == '__main__':
-   socket.run(flask_app, host='127.0.0.1', port='5000')
+   socket.run(flask_app, host='0.0.0.0', port=5001)

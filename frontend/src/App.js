@@ -27,7 +27,7 @@ ChartJS.register(
 class App extends React.Component {
   constructor() {
     super()
-    this.serverURL = "http://0.0.0.0:5000/";
+    this.serverURL = "http://127.0.0.1:5000/";
     this.socket = io(this.serverURL);
     this.state = {
       columns: [],
