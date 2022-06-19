@@ -27,7 +27,7 @@ ChartJS.register(
 class App extends React.Component {
   constructor() {
     super()
-    this.serverURL = "http://127.0.0.1:5000/";
+    this.serverURL = "http://0.0.0.0:5000/";
     this.socket = io(this.serverURL);
     this.state = {
       columns: [],
@@ -38,15 +38,28 @@ class App extends React.Component {
       },
     };
   }
+
   componentDidMount() {
+    this.socket.connect();
     this.socket.on('message', (json) => {
-      const data = JSON.parse(json);
-      const diagramData = this.getDiagramData(data.data);
-      this.setState({
-        columns: data.columns,
-        data: data.data,
-        diagramData: diagramData
-      });
+      this.createState(json);
+    });
+    setInterval(() => {
+      this.socket.send('get_data')
+    }, 5000);
+  };
+
+  componentWillUnmount() {
+    this.socket.close()
+  };
+
+  createState(json) {
+    const data = JSON.parse(json);
+    const diagramData = this.getDiagramData(data.data);
+    this.setState({
+      columns: data.columns,
+      data: data.data,
+      diagramData: diagramData
     });
   };
 
@@ -87,7 +100,7 @@ class App extends React.Component {
     return (
       <div className="App">
         <div className="left-side">
-          <Line
+        <Line
             width={1100}
             height={600}
             data={this.state.diagramData}
