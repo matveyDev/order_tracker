@@ -44,7 +44,7 @@ class App extends React.Component {
     this.socket.on('message', (json) => {
       this.createState(json);
     });
-    const timerId = setInterval(() => {
+    this.timerId = setInterval(() => {
       this.socket.send('get_data')
     }, 5000);
   };
