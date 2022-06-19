@@ -8,6 +8,7 @@ from .settings import CREDENTIALS_FILE, \
 
 
 class GoogleSheetsAPI:
+
     def __init__(self) -> None:
         credentials = ServiceAccountCredentials.from_json_keyfile_name(
             CREDENTIALS_FILE,
