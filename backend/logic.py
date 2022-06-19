@@ -4,8 +4,8 @@ import pandas as pd
 from sqlalchemy import create_engine, delete, update
 from sqlalchemy.orm import Session
 
-from .core.database.db import SQLALCHEMY_DATABASE_URL
 from .core.order.models import Order
+from .core.database.db import SQLALCHEMY_DATABASE_URL
 from .google_sheets.api import GoogleSheetsAPI
 from .utils import DFHandler
 
@@ -212,8 +212,9 @@ class OrderTrackManager(OrderTrack):
         # Date format from sheet
         df['delivery_expected'] = df['delivery_expected'].apply(lambda x: x.strftime('%d.%m.%Y'))
         df = df.drop(columns=['price_in_rubles'])
+        df = df.sort_values(by=['id'])
         jsonable_df = df.to_json(orient="split")
-        
+
         return jsonable_df
 
     def check_delivery_expected(self):
@@ -225,10 +226,12 @@ class OrderTrackManager(OrderTrack):
                 # Send notification in telegram
                 pass
 
-    def check_updates(self):
+    def check_updates(self) -> bool:
         insered = self.insert_in_db()
         updated = self.update_db()
         deleted = self.delete_from_db()
-        
+
         if any([insered, updated, deleted]):
-            data = self._get_df_from_db()
+            return True
+
+        return False
