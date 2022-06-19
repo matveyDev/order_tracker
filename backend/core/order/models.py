@@ -1,7 +1,7 @@
-from ..database.db import Base
-
 from datetime import datetime
-from sqlalchemy import Column, Integer, Numeric, Date, null
+from sqlalchemy import Column, Date, Integer, Numeric, null
+
+from ..database.db import Base
 
 
 class Order(Base):
