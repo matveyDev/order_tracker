@@ -22,6 +22,11 @@ PS: Не упаковал в докер Celery (Через него отправ
 
 -> sudo kill PID_NUMBER
 
+3) Проблемы с alembic: 
+
+-> docker-compose down
+
+-> docker-compose up --build
 
 tg: @matvey_dev
 
