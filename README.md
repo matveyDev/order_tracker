@@ -1,6 +1,6 @@
 Install:
 
--> git clone https://github.com/matveyDev/order_tracker
+-> git clone [https://github.com/matveyDev/order_tracker](https://github.com/matveyDev/order_tracker.git)
 
 -> docker-compose up --build
 
