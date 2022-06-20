@@ -11,8 +11,8 @@ manager = OrderTrackManager()
 flask_app = Flask(__name__)
 flask_app.host = 'localhost'
 flask_app.config['SECRET_KEY'] = 'SUPERsecret'
-flask_app.config['CELERY_BROKER_URL'] = 'redis://localhost:6379'
-flask_app.config['result_backend'] = 'redis://localhost:6379'
+flask_app.config['CELERY_BROKER_URL'] = 'redis://redis:6379'
+flask_app.config['result_backend'] = 'redis://redis:6379'
 CORS(flask_app, support_credentials=True)
 
 socket = SocketIO(flask_app, cors_allowed_origins='*')
@@ -46,4 +46,4 @@ def on_message(message):
 
 
 if __name__ == '__main__':
-   socket.run(flask_app, host='0.0.0.0', port=5001)
+   socket.run(flask_app)
