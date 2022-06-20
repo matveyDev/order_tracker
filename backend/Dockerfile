@@ -11,5 +11,4 @@ COPY . .
 RUN export FLASK_APP=app
 
 RUN chmod u+x ./entrypoint.sh
-
 ENTRYPOINT ["./entrypoint.sh"]

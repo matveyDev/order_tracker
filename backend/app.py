@@ -46,4 +46,4 @@ def on_message(message):
 
 
 if __name__ == '__main__':
-   socket.run(flask_app)
+   socket.run(flask_app, host='0.0.0.0')
