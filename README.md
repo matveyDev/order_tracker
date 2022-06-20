@@ -23,5 +23,7 @@ PS: Не упаковал в докер Celery (Через него отправ
 -> sudo kill PID_NUMBER
 
 
+tg: @matvey_dev
+
 
 <img width="1786" alt="image" src="https://user-images.githubusercontent.com/99687428/174512848-9852f708-9d64-4f61-a42f-111b09777cb7.png">
